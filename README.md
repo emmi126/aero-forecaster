@@ -4,7 +4,7 @@ A weather app using Go and Docker. This app fetches weather data using the OpenW
 
 ### Setup Instructions  
 
-1. Clone the repository: `git clone https://github.com/emmi126/aeroforecaster.git`
+1. Clone the repository: `git clone https://github.com/emmi126/aero-forecaster.git`
 2. Obtain an API key from [OpenWeatherMap](https://openweathermap.org/api).  
 2. In the `.env` file, replace `your_api_key_here` with your OpenWeatherMap API key.
 3. Build the docker image: `docker build -t aeroforecaster .`
