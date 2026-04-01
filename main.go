@@ -6,6 +6,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"strings"
 
 	"github.com/briandowns/openweathermap"
 	"github.com/joho/godotenv"
@@ -23,7 +24,7 @@ func init() {
 	// Load environment variables
 	err := godotenv.Load()
 	if err != nil {
-		log.Fatalf("Error loading .env file")
+		log.Printf("No .env file loaded (%v). Continuing with process environment variables.", err)
 	}
 
 	// Read API key from the environment
@@ -47,6 +48,7 @@ func sendError(w http.ResponseWriter, code int, message string) {
 func main() {
 	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("./static"))))
 	http.HandleFunc("/", serveHome)
+	http.HandleFunc("/healthz", healthCheck)
 	http.HandleFunc("/weather", getWeather)
 
 	port := ":8080"
@@ -54,12 +56,17 @@ func main() {
 	log.Fatal(http.ListenAndServe(port, nil))
 }
 
+func healthCheck(w http.ResponseWriter, _ *http.Request) {
+	w.WriteHeader(http.StatusOK)
+	_, _ = w.Write([]byte("ok"))
+}
+
 func serveHome(w http.ResponseWriter, r *http.Request) {
 	http.ServeFile(w, r, "./static/index.html")
 }
 
 func getWeather(w http.ResponseWriter, r *http.Request) {
-	city := r.URL.Query().Get("city")
+	city := strings.TrimSpace(r.URL.Query().Get("city"))
 	if city == "" {
 		sendError(w, http.StatusBadRequest, "City parameter is required")
 		return
@@ -76,6 +83,12 @@ func getWeather(w http.ResponseWriter, r *http.Request) {
 		sendError(w, http.StatusNotFound, "City not found or weather data unavailable")
 		return
 	}
+	if len(weather.Weather) == 0 {
+		sendError(w, http.StatusBadGateway, "Weather provider returned incomplete weather data")
+		return
+	}
+
+	windSpeedKmh := weather.Wind.Speed * 3.6
 
 	iconPath := getWeatherIcon(
 		weather.Weather[0].ID,
@@ -88,7 +101,7 @@ func getWeather(w http.ResponseWriter, r *http.Request) {
 		"locationName": weather.Name,
 		"temperature":  weather.Main.Temp,
 		"humidity":     weather.Main.Humidity,
-		"wind_speed":   weather.Wind.Speed,
+		"wind_speed":   windSpeedKmh,
 		"description":  weather.Weather[0].Description,
 		"icon":         iconPath,
 	}

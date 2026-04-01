@@ -4,7 +4,6 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>AeroForecaster</title>
-  <link rel="icon" href="favicon.ico">
   <link rel="stylesheet" href="/static/css/style.css">
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500&display=swap" rel="stylesheet">
 </head>
@@ -12,7 +11,7 @@
   <div class="card">
     <div class="search">
       <input type="text" placeholder="Enter location" spellcheck="false">
-      <button><img src="/static/res/icons/search.png"></button>
+      <button aria-label="Search weather"><img src="/static/res/icons/search.png" alt="Search"></button>
     </div>
 
     <div class="error">
@@ -20,19 +19,19 @@
     </div>
 
     <div class="weather">
-      <img src="/static/res/weather/day-storm.png" class="weather-icon">
+      <img src="/static/res/weather/day-storm.png" class="weather-icon" alt="Current weather icon">
       <h1 class="temperature"></h1>
       <h2 class="locationName"></h2>
       <div class="details">
         <div class="column">
-          <img src="/static/res/icons/humidity.png">
+          <img src="/static/res/icons/humidity.png" alt="Humidity icon">
           <div>
             <p class="humidity"></p>
             <p>Humidity</p>
           </div>
         </div>
         <div class="column">
-          <img src="/static/res/icons/wind.png">
+          <img src="/static/res/icons/wind.png" alt="Wind icon">
           <div>
             <p class="wind"></p>
             <p>Wind Speed</p>
